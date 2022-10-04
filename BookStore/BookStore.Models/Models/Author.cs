@@ -1,15 +1,7 @@
 ﻿namespace BookStore.Models.Models
 {
-    public record Author
+    public record Author : Person
     {
-        public int Id { get; init; }
-
-        public string Name { get; init; }
-
-        public int Age { get; init; }
-
-        public DateTime DateOfBirth { get; init; }
-
         public string NickName { get; init; }
     }
 }
