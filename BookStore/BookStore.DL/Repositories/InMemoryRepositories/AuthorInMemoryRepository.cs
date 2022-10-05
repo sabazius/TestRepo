@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace BookStore.DL.Repositories.InMemoryRepositories
 {
-    public class AuthorInMemoryRepository : IAuthorRepository
+    public class AuthorInMemoryRepository 
     {
         private readonly ILogger<AuthorInMemoryRepository> _logger;
 

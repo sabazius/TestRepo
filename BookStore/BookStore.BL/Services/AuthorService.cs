@@ -4,7 +4,6 @@ using BookStore.DL.Interfaces;
 using BookStore.Models.Models;
 using BookStore.Models.Requests;
 using BookStore.Models.Responses;
-using System.Collections;
 using System.Net;
 
 namespace BookStore.BL.Services
@@ -19,12 +18,12 @@ namespace BookStore.BL.Services
             _authorRepository = authorRepository;
             _mapper = mapper;
         }
-        public IEnumerable<Author> GetAll()
+        public async Task<IEnumerable<Author>> GetAll()
         {
-            return _authorRepository.GetAll();
+            return await _authorRepository.GetAll();
         }
 
-        public Author? GetAuthorById(int id)
+        public async Task<Author?> GetAuthorById(int id)
         {
             var author = _authorRepository.GetAuthorById(id);
 
@@ -33,14 +32,14 @@ namespace BookStore.BL.Services
 
             }
 
-            return _authorRepository.GetAuthorById(id);
+            return await _authorRepository.GetAuthorById(id);
         }
 
-        public AddAuthorResponse AddAuthor(AddAuthorRequest authorRequest)
+        public async Task<AddAuthorResponse> AddAuthor(AddAuthorRequest authorRequest)
         {
             try
             {
-                var auth = _authorRepository.GetAuthorByName(authorRequest.Name);
+                var auth = await _authorRepository.GetAuthorByName(authorRequest.Name);
 
                 if (auth != null)
                 {
@@ -53,7 +52,7 @@ namespace BookStore.BL.Services
                 }
 
                 var author = _mapper.Map<Author>(authorRequest);
-                var result = _authorRepository.AddAuthor(author);
+                var result = await _authorRepository.AddAuthor(author);
 
 
                 return new AddAuthorResponse()
@@ -68,24 +67,24 @@ namespace BookStore.BL.Services
             }
         }
 
-        public bool UpdateAuthor(Author author)
+        public async Task<bool> UpdateAuthor(Author author)
         {
-            return _authorRepository.UpdateAuthor(author);
+            return await _authorRepository.UpdateAuthor(author);
         }
 
-        public bool DeleteAuthor(int id)
+        public async Task<bool> DeleteAuthor(int id)
         {
-            return _authorRepository.DeleteAuthor(id);
+            return await _authorRepository.DeleteAuthor(id);
         }
 
-        public Author? GetAuthorByName(string name)
+        public async Task<Author?> GetAuthorByName(string name)
         {
-            return _authorRepository.GetAuthorByName(name);
+            return await _authorRepository.GetAuthorByName(name);
         }
 
-        public bool AddMultipleAuthors(IEnumerable<Author> authorCollection)
+        public async Task<bool> AddMultipleAuthors(IEnumerable<Author> authorCollection)
         {
-            return _authorRepository.AddMultipleAuthors(authorCollection);
+            return await _authorRepository.AddMultipleAuthors(authorCollection);
         }
     }
 }

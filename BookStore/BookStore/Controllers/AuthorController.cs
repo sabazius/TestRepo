@@ -25,16 +25,15 @@ namespace BookStore.Controllers
 
         [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpGet("GetAllAuthors")]
-        public IActionResult GetAllAuthors()
+        public async Task<IActionResult> GetAllAuthors()
         {
-            return Ok(_authorService.GetAll());
+            return Ok(await _authorService.GetAll());
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost(nameof(AddAuthorRange))]
-        public IActionResult AddAuthorRange([FromBody] 
-            AddMultipleAuthorsRequest addMultipleAuthorsRequest)
+        public async Task<IActionResult> AddAuthorRange([FromBody] AddMultipleAuthorsRequest addMultipleAuthorsRequest)
         {
             if (addMultipleAuthorsRequest != null &&
                 !addMultipleAuthorsRequest.AuthorRequests.Any())
@@ -43,7 +42,7 @@ namespace BookStore.Controllers
             var authorCollection = _mapper.Map<IEnumerable<Author>>
                 (addMultipleAuthorsRequest.AuthorRequests);
 
-            var result = _authorService.AddMultipleAuthors(authorCollection);
+            var result = await _authorService.AddMultipleAuthors(authorCollection);
 
             if (!result) return BadRequest(result);
 
@@ -53,7 +52,7 @@ namespace BookStore.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost("AddAuthor")]
-        public IActionResult AddAuthor([FromBody] AddAuthorRequest authorRequest)
+        public async Task<IActionResult> AddAuthor([FromBody] AddAuthorRequest authorRequest)
         {
             //if (authorRequest == null) return BadRequest(authorRequest);
 
@@ -61,7 +60,7 @@ namespace BookStore.Controllers
 
             //if (authorExist != null) return BadRequest("Author Already Exist!");
 
-            var result = _authorService.AddAuthor(authorRequest);
+            var result = await _authorService.AddAuthor(authorRequest);
 
             if (result.HttpStatusCode == HttpStatusCode.BadRequest)
                 return BadRequest(result);
@@ -73,7 +72,7 @@ namespace BookStore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpGet(nameof(GetAuthorById))]
-        public IActionResult GetAuthorById(int id)
+        public async Task<IActionResult> GetAuthorById(int id)
         {
             if (id <= 0)
             {
@@ -81,13 +80,32 @@ namespace BookStore.Controllers
                 return BadRequest($"Parameter id:{id} must be greater than zero!");
             }
 
-            var result = _authorService.GetAuthorById(id);
+            var result = await _authorService.GetAuthorById(id);
 
             if (result == null)
             {
                 //log
                 return NotFound(id);
             }
+
+            return Ok(result);
+        }
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [HttpPut("UpdateAuthor")]
+        public async Task<IActionResult> UpdateAuthor(UpdateAuthorRequest authorRequest)
+        {
+            if (authorRequest == null) return BadRequest();
+
+            var author = await _authorService.GetAuthorById(authorRequest.Id);
+
+            if (author == null) return NotFound(authorRequest);
+
+            var authorForUpdate = _mapper.Map<Author>(authorRequest);
+
+            var result = await _authorService.UpdateAuthor(authorForUpdate);
 
             return Ok(result);
         }
