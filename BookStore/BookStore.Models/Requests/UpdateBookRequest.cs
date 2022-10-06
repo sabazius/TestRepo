@@ -1,6 +1,6 @@
-﻿namespace BookStore.Models.Models
+﻿namespace BookStore.Models.Requests
 {
-    public record Book
+    public class UpdateBookRequest
     {
         public int Id { get; init; }
 

@@ -2,6 +2,6 @@
 {
     public record Author : Person
     {
-        public string NickName { get; init; }
+        public string? NickName { get; init; }
     }
 }
