@@ -6,6 +6,6 @@ namespace BookStore.Models.Responses
     {
         public HttpStatusCode HttpStatusCode { get; init; }
 
-        public string Message { get; set; }
+        public string Message { get; init; } = string.Empty;
     }
 }
