@@ -1,7 +1,10 @@
 ﻿using AutoMapper;
 using BookStore.BL.Interfaces;
+using BookStore.Models.MediatR.Commands;
 using BookStore.Models.Models;
 using BookStore.Models.Requests;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookStore.Host.Controllers
@@ -14,22 +17,31 @@ namespace BookStore.Host.Controllers
         private readonly IAuthorService _authorService;
         private readonly IMapper _mapper;
         private readonly ILogger<BookController> _logger;
-        public BookController(IBookService bookService, IMapper mapper, ILogger<BookController> logger, IAuthorService authorService)
+        private readonly IMediator _mediator;
+
+        public BookController(IBookService bookService,
+            IMapper mapper,
+            ILogger<BookController> logger,
+            IAuthorService authorService,
+            IMediator mediator)
         {
             _bookService = bookService;
             _mapper = mapper;
             _logger = logger;
             _authorService = authorService;
+            _mediator = mediator;
         }
 
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpGet("GetAllBooks")]
         public async Task<IActionResult> GetAllBooks()
         {
-            _logger.LogWarning("alabala");
-            return Ok(await _bookService.GetAll());
+            return Ok(await _mediator.Send(new GetAllBooksCommand()));
+            //return Ok(await _bookService.GetAll());
         }
 
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "User")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet("GetBookById")]
@@ -73,9 +85,9 @@ namespace BookStore.Host.Controllers
 
             if (book == null) return NotFound("Book not found!");
 
-            await _bookService.Delete(id);
+            var result = await _mediator.Send(new DeleteBookCommand(id));
 
-            return Ok(id);
+            return result ? Ok(id) : StatusCode(500);
         }
 
 
@@ -94,7 +106,7 @@ namespace BookStore.Host.Controllers
 
             var bookToAdd = _mapper.Map<Book>(addBookRequest);
 
-            return Ok(await _bookService.Add(bookToAdd));
+            return Ok(await _mediator.Send(new AddBookCommand(bookToAdd)));
         }
 
         [HttpPost("TestMyClassValidation")]

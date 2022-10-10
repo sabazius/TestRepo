@@ -23,7 +23,6 @@ namespace BookStore.DL.Repositories.SQLRepositories
             var result = new List<Book>();
             using (var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
             {
-
                 try
                 {
                     await conn.OpenAsync();
@@ -70,7 +69,7 @@ namespace BookStore.DL.Repositories.SQLRepositories
                 {
                     await conn.OpenAsync();
 
-                    string query = "INSERT INTO Books (Title, AuthorId) VALUES(@Title, @AuthorId)";
+                    string query = "INSERT INTO Books (Title, AuthorId, LastUpdated, Quantity, Price) VALUES(@Title, @AuthorId, @LastUpdated, @Quantity, @Price)";
 
                     var result = await conn.ExecuteAsync(query, book);
 

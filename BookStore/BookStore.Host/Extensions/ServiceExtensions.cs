@@ -11,6 +11,8 @@ namespace BookStore.Host.Extensions
         {
             services.AddSingleton<IAuthorRepository, AuthorSqlRepository>();
             services.AddSingleton<IBookRepository, BookSqlRepository>();
+            services.AddSingleton<IEmployeesRepository, EmployeesRepository>();
+            //services.AddSingleton<IUserInfoRepository, UserInfoStore>();
 
             return services;
         }
@@ -19,6 +21,8 @@ namespace BookStore.Host.Extensions
         {
             services.AddSingleton<IBookService, BookService>();
             services.AddSingleton<IAuthorService, AuthorService>();
+            services.AddSingleton<IEmployeeService, EmployeeService>();
+            services.AddTransient<IIdentityService, IdentityService>();
 
             return services;
         }
